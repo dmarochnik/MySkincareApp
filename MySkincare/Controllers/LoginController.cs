@@ -26,10 +26,10 @@ namespace MySkincare.Controllers
             User u = null;
             using (var db = new UsersContext())
             {
-                var login = db.Logins               
-                    .Where(l => l.Email == request.Username && l.Password == request.Password)
+                var login = db.Logins
+                    .Where(l => l.Email == request.Username)
                     .FirstOrDefault();
-                if (login == null)
+                if (login == null || BCrypt.Net.BCrypt.Verify(request.Password, login.Password) == false)
                 {
                     return NotFound("Incorrect username or password");
                 }

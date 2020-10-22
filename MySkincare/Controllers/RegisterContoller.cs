@@ -29,7 +29,6 @@ namespace MySkincare.Controllers
         {
             User u = null;
             Login l = null;
-            Debug.WriteLine("received object request: " + request.Username);
             using (var db = new UsersContext())
             {
                 u = new User()
@@ -44,18 +43,19 @@ namespace MySkincare.Controllers
                 };
                 var userEntity = await db.Users.AddAsync(u);
                 await db.SaveChangesAsync();
+                string pass = BCrypt.Net.BCrypt.HashPassword(request.Password);
                 l = new Login()
                 {
                     UID = userEntity.CurrentValues.GetValue<int>("UID"),
                     Email = request.Username,
-                    Password = request.Password
+                    Password = pass
                 };
                 db.Logins.Add(l);
                 db.SaveChanges();
             }
             return Ok(u);
         }
-        
+
     }
 }
 
