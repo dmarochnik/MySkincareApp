@@ -15,10 +15,12 @@ namespace MySkincare.Controllers
     public class QuizController : ControllerBase
     {
         private readonly ILogger<QuizController> _logger;
+        private readonly SkincareContext _context;
 
-        public QuizController(ILogger<QuizController> logger)
+        public QuizController(ILogger<QuizController> logger, SkincareContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
@@ -26,12 +28,10 @@ namespace MySkincare.Controllers
         {
             IList<QuizQuestion> q = null;
 
-            using (var db = new QuizContext())
-            {
-                q = db.QuizQuestions
-                    .Include(question => question.Answers)
-                    .ToList();
-            }
+            q = _context.QuizQuestions
+                .Include(question => question.Answers)
+                .ToList();
+
             return Ok(q);
         }
 

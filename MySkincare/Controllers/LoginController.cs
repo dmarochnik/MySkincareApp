@@ -14,33 +14,34 @@ namespace MySkincare.Controllers
     public class LoginController : ControllerBase
     {
         private readonly ILogger<LoginController> _logger;
+        private readonly SkincareContext _context;
 
-        public LoginController(ILogger<LoginController> logger)
+        public LoginController(ILogger<LoginController> logger, SkincareContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpPost]
         public IActionResult Login(LoginRequest request)
         {
             User u = null;
-            using (var db = new UsersContext())
+
+            var login = _context.Logins
+                .Where(l => l.Email == request.Username)
+                .FirstOrDefault();
+            if (login == null || BCrypt.Net.BCrypt.Verify(request.Password, login.Password) == false)
             {
-                var login = db.Logins
-                    .Where(l => l.Email == request.Username)
-                    .FirstOrDefault();
-                if (login == null || BCrypt.Net.BCrypt.Verify(request.Password, login.Password) == false)
-                {
-                    return NotFound("Incorrect username or password");
-                }
-                u = db.Users
-                    .Where(user => user.UID == login.UID)
-                    .FirstOrDefault();
-                if (u == null)
-                {
-                    return NotFound("User not found");
-                }
+                return NotFound("Incorrect username or password");
             }
+            u = _context.Users
+                .Where(user => user.UID == login.UID)
+                .FirstOrDefault();
+            if (u == null)
+            {
+                return NotFound("User not found");
+            }
+
             return Ok(u);
         }
     }

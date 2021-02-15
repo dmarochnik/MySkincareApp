@@ -8,18 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MySkincare.Models
 {
-    public class UsersContext : DbContext
-    {
-        public DbSet<User> Users { get; set; }
-        public DbSet<Login> Logins { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(
-                @"Data Source=LAPTOP-3NPA21G9\SQLEXPRESS;Initial Catalog=MySkincare_DB;Integrated Security=True");
-        }
-    }
-
     public class User
     {
         [Key]

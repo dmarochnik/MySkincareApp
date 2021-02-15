@@ -18,10 +18,12 @@ namespace MySkincare.Controllers
     public class RegisterController : ControllerBase
     {
         private readonly ILogger<RegisterController> _logger;
+        private readonly SkincareContext _context;
 
-        public RegisterController(ILogger<RegisterController> logger)
+        public RegisterController(ILogger<RegisterController> logger, SkincareContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpPost]
@@ -29,30 +31,29 @@ namespace MySkincare.Controllers
         {
             User u = null;
             Login l = null;
-            using (var db = new UsersContext())
+
+            u = new User()
             {
-                u = new User()
-                {
-                    FName = request.FName,
-                    LName = request.LName,
-                    PhoneNum = request.PhoneNum,
-                    StreetAddress = request.StreetAddress,
-                    City = request.City,
-                    State = request.State,
-                    ZIP = request.ZIP
-                };
-                var userEntity = await db.Users.AddAsync(u);
-                await db.SaveChangesAsync();
-                string pass = BCrypt.Net.BCrypt.HashPassword(request.Password);
-                l = new Login()
-                {
-                    UID = userEntity.CurrentValues.GetValue<int>("UID"),
-                    Email = request.Username,
-                    Password = pass
-                };
-                db.Logins.Add(l);
-                db.SaveChanges();
-            }
+                FName = request.FName,
+                LName = request.LName,
+                PhoneNum = request.PhoneNum,
+                StreetAddress = request.StreetAddress,
+                City = request.City,
+                State = request.State,
+                ZIP = request.ZIP
+            };
+            var userEntity = await _context.Users.AddAsync(u);
+            await _context.SaveChangesAsync();
+            string pass = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            l = new Login()
+            {
+                UID = userEntity.CurrentValues.GetValue<int>("UID"),
+                Email = request.Username,
+                Password = pass
+            };
+            _context.Logins.Add(l);
+            _context.SaveChanges();
+
             return Ok(u);
         }
 

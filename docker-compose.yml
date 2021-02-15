@@ -1,0 +1,29 @@
+version: '2.0'
+volumes:
+  dbvol:
+services:
+  # storage
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbvol:/var/lib/mysql/
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: skincare
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: my-secret-pw
+  #applications
+  api:
+    build:
+      context: .
+      dockerfile: ./MySkincare/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+80
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "51803:80"
+      - "44360:443"
+    depends_on:
+      - "mysql"
