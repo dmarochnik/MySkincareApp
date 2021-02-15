@@ -9,30 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MySkincare.Models
 {
-    public class QuizContext : DbContext
-    {
-        public DbSet<QuizQuestion> QuizQuestions { get; set; }
-        public DbSet<QuizAnswer> QuizAnswers { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(
-                @"Data Source=LAPTOP-3NPA21G9\SQLEXPRESS;Initial Catalog=MySkincare_DB;Integrated Security=True");
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-/*            modelBuilder.Entity<QuizQuestion>()
-                .HasMany(q => q.Answers)
-                .WithOne();*/
-
-            modelBuilder.Entity<QuizAnswer>()
-                .HasOne(a => a.Question)
-                .WithMany(q => q.Answers)
-                .HasForeignKey(a => a.QID);
-        }
-    }
-
     public class QuizQuestion
     {
         [Key]
