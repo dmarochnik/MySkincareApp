@@ -16,9 +16,10 @@ namespace MySkincare.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                @"Data Source=CORP-ITDARIA\SQLEXPRESS;Initial Catalog=MySkincare_DB;Integrated Security=True");
+                @"Data Source=LAPTOP-3NPA21G9\SQLEXPRESS;Initial Catalog=MySkincare_DB;Integrated Security=True");
         }
     }
+
     public class User
     {
         [Key]
